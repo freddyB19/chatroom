@@ -1,12 +1,15 @@
 import settings 
 from factory import create_app
-from factory import create_app_socket 
+from factory import create_app_socket
+
+
+app = create_app(config_object = settings.configs['deploy'])
+socketio = create_app_socket(app)
 
 
 if __name__ == '__main__':
-	app = create_app(config_object = settings.configs['dev'])
-	socket = create_app_socket(app)
+	socketio.run(app, use_reloader = True)
 
-	socket.run(app, use_reloader = True)
+# gunicorn -b 127.0.0.1:5000 --worker-class eventlet app:app
 
 
