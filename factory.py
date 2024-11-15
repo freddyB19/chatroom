@@ -18,10 +18,7 @@ def create_app(config_object):
 
 
 	#
-	cors = CORS(app, resource={
-		'/chat': {'origins': '*'}, 
-		'/sala-espera': {'origins': '*'}
-	})
+	cors = CORS(app, resource=['http:localhost:5000/'])
 
 	#
 	cache.init_app(app)
