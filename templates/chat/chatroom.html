@@ -1,0 +1,249 @@
+{% extends "base/base.html" %}
+
+{% block title %}chat | {{name_room}} {% endblock title %}
+
+{% block extra_style %}
+	<link rel="stylesheet" href="{{url_for('static', filename='css/chat.css')}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+{% endblock extra_style %}
+
+{% block content %}
+<div class="uk-container uk-container-xsmall uk-margin-medium-top uk-margin-medium-bottom" id="chatroom" data-room="{{name_room}}">
+	<div class="uk-container">
+        <div uk-navbar >
+            <div class="uk-navbar-left uk-text-middle">
+				<h2 class="uk-text-bottom uk-margin-remove-bottom">Room: {{name_room}}</h2> 
+            </div>
+
+            <div class="uk-navbar-right uk-text-middle">            	
+				<nav uk-dropnav>
+				    <ul class="uk-subnav uk-margin-remove-bottom">
+				        <li>
+				            <a href><span id="username">{{username}}</span> <span uk-drop-parent-icon></span></a>
+				            <div class="uk-dropdown">
+				                <ul class="uk-nav uk-dropdown-nav">
+				                    <li>
+				                    	<button uk-icon="icon: sign-out" id="salir" class="uk-button uk-button-text">Salir </button>
+				                    </li>
+				                    <li class="uk-nav-divider"></li>
+				                </ul>
+				            </div>
+				        </li>
+				    </ul>
+				</nav>
+				            	            	
+            </div>
+
+        </div>
+        
+        <p id="notificacion-mensaje" style="height: 30px;">
+        </p>
+
+
+    </div>
+    <!-- char-area -->
+    <section class="message-area">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="chat-area">
+                        <!-- chatlist -->
+                        <!-- chatlist -->
+                        <!-- chatbox -->
+                        <div class="chatbox">
+                            <div class="modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="msg-head">
+                                    	<div class="row" style="height: 30px;">
+                                            <div class="col-8">
+                                                 <small id="typing" >
+                                                 </small>
+                                            </div>
+                                            <div class="col-4">
+                                            	<p id="notificacion-usuarios" class="uk-text-right">
+                                                    <small class="">
+                                                        usuarios en el chat: 
+                                                        <span id="notificacion-usuarios-totales" class="uk-badge">
+                                                        </span>
+                                                    </small>
+                                                </p>												
+                                            </div>
+                                        </div>
+                                    	
+                                    </div>
+
+
+                                    <div class="modal-body">
+                                        <div class="msg-body">
+                                            <ul id="allMessages">
+                                            </ul>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="send-box">
+                                        <form id="form-chat">
+                                            <input type="text" class="form-control" aria-label="message…" placeholder="Write message…"  id="input-message">
+
+                                            <button type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i> Send</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- chatbox -->
+
+
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+    <!-- char-area -->
+
+</div>
+
+{% endblock content %}
+
+
+{% block script %}
+	<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+	<script src="{{url_for('static', filename='js/uikit.min.js')}}"></script>
+	<script src="{{url_for('static', filename='js/uikit-icons.min.js')}}"></script>
+	<!--<script src="{{url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>-->
+
+	<script>
+
+		const socket = io('http://127.0.0.1:5000/chat')
+		const room = document.querySelector("#chatroom").dataset.room
+		const consola = document.querySelector("#allMessages")
+		const input_mensaje = document.querySelector("#input-message")
+		const username = document.querySelector("#username").textContent
+		const tipo_mensaje = {
+				emisor: 'repaly',
+				receptor: 'sender',
+			}
+	
+		socket.on('connect', () => {
+			socket.emit('join', {room: room, username: username})
+		})
+
+		socket.on('conectando', ({historial}) => {
+
+			if(historial.length){
+
+				const historial_mensajes = historial.map((msg) => {
+					const mensaje = document.createElement("li")
+					mensaje.className = (username == msg.username) 
+						? tipo_mensaje.emisor 
+						: tipo_mensaje.receptor
+
+					mensaje.innerHTML = `
+						<p>${msg.mensaje}</p>
+						<span class="time">${msg.tiempo}</span>
+					`
+					return mensaje
+				})
+
+				consola.replaceChildren()
+				consola.append(...historial_mensajes)
+			} 
+
+		})
+
+		socket.on('notificacion', ({pin}) => {
+			console.log(`Usuarios en el room: ${pin.usuarios}`)
+			document.querySelector(
+				"#notificacion-mensaje"
+			).textContent = pin.mensaje
+
+			document.querySelector(
+				'#notificacion-usuarios-totales'
+			).textContent = pin.usuarios
+			
+			setTimeout((dom) => {
+				dom.textContent = ""
+			}, 
+			3000, 
+			document.querySelector("#notificacion-mensaje"))
+
+		})
+
+		socket.on('typing', ({pin}) => {
+			
+			if(username != pin.username){
+				if(!document.querySelector(`#user-${pin.username}`)){
+					const userTyping = document.createElement('p')
+					userTyping.textContent = pin.mensaje
+					userTyping.setAttribute('id', `user-${pin.username}`)
+					document.querySelector("#typing").replaceChildren()
+					document.querySelector("#typing").appendChild(userTyping)
+				}
+
+			}
+
+			
+		})
+
+		socket.on('stopped_typing', ({pin}) => {
+			console.log(pin.mensaje)
+			if(document.querySelector(`#user-${pin.username}`)){
+				document.querySelector("#typing").removeChild(
+					document.querySelector(`#user-${pin.username}`)
+				)
+			}
+			
+		})
+
+		socket.on('mensaje', (msg) => {
+			console.log(msg)
+			console.log(tipo_mensaje[msg.tipo])
+
+
+			const mensaje = document.createElement('li')
+			mensaje.className = (username == msg.username) 
+				? tipo_mensaje.emisor 
+				: tipo_mensaje.receptor
+			mensaje.innerHTML = `
+				<p>${msg.mensaje}</p>
+				<span class="time">${msg.tiempo}</span>
+			`
+			consola.appendChild(mensaje)
+		})
+
+
+		input_mensaje.addEventListener('input', (event) => {
+			if(event.target.value.length > 0)
+				socket.emit('typing', {room: room, username: username, typing: true})
+		})
+
+		input_mensaje.addEventListener('blur', (event) => {
+			setTimeout((data) => {
+				console.log(data)
+				socket.emit('stopped_typing', data)
+			}, 800, {room: room, username: username, typing: false})
+
+		})
+
+
+		document.querySelector("#form-chat").addEventListener("submit", (event) => {
+			event.preventDefault()
+
+			socket.emit('chat_mensaje', {mensaje: input_mensaje.value, room: room, username: username})
+			input_mensaje.value = ""
+
+
+			input_mensaje.blur()
+		})
+
+
+		document.querySelector("#salir").addEventListener('click', (event) => {
+			socket.emit('leave', {room: room, username: username})
+		
+			window.location.replace(" {{url_for('chat.salir_chat')}} ");
+		})
+
+
+	</script>
+{% endblock script %}

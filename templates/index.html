@@ -1,0 +1,128 @@
+{% extends "base/base.html" %}
+
+
+{% block content %}
+
+<h1 class="uk-heading-line uk-text-center"><span>Bienvenido a los ChatRooms</span></h1>
+
+<div id="sala_espera" data-room="esRoom">
+
+	<div class="uk-grid-small uk-child-width-expand@s uk-margin-large-bottom" uk-grid>
+
+	<div class="uk-padding uk-height-medium uk-text-center">
+		<form id="form" action="{{url_for('chat.index')}}" method="POST" class="uk-form-horizontal uk-margin-large">
+			<div class="uk-margin">
+		        <label class="uk-form-label" for="username">Nombre de usuario: <b><small uk-tooltip="El nombre de usuario le permite identificarse en el Chat Room">?</small></b> </label>
+		        <div class="uk-form-controls">
+		        	<div class="uk-inline">
+		        		<span class="uk-form-icon" uk-icon="icon: user"></span>
+		        		<input class="uk-input {% if user %}uk-form-danger{% endif %}" id="username" name="username" type="text" placeholder="Nombre de usuario..." aria-label="Not clickable icon" required>
+		        	</div>
+		        	{% if user %}
+
+					{% with %}
+						{% set is_valid_username = user.is_valid_username %}
+						{% set room = user.room %}
+						{% set username = user.username %}
+
+					    {% if not is_valid_username %}
+						<div class="uk-alert-danger" uk-alert>
+					    <a href class="uk-alert-close" uk-close></a>
+						    <p class="uk-text-small">Y existe un usuario en el chatRoom <b>{{room}}</b> con ese nombre: {{username}}.</p>
+						</div>
+						{% endif %}
+					{% endwith %}
+						
+					{% endif %}
+
+		        	
+		        </div>
+	    	</div>
+	    	<div class="uk-margin">
+		        <label class="uk-form-label" for="nameChatroom">Nombre del room:</label>
+		        <div class="uk-form-controls">
+		        	<div class="uk-inline">
+		        		<span class="uk-form-icon" uk-icon="icon: commenting"></span>
+		        		<input class="uk-input" id="nameChatroom" name="nameChatroom" type="text" placeholder="Chat room..." aria-label="Not clickable icon" required>
+		        	</div>
+		        </div>
+	    	</div>
+
+			<div class="uk-flex uk-flex-center">
+				<button type="submit" class="uk-button uk-button-primary uk-button-large">Entrar</button>
+			</div>
+		</form>
+	</div>
+
+	<div class="uk-text-center uk-text-right@s uk-padding uk-height-large">
+		<h2 class="uk-text-default uk-text-center uk-text-right@s uk-heading-bullet uk-text-uppercase">Rooms Disponibles</h2>
+		<div id="all_rooms" ></div>
+	</div>
+	</div>
+
+</div>
+
+
+{% endblock content %}
+
+{% block script %}
+	<script src="{{url_for('static', filename='js/uikit.min.js')}}"></script>
+	<script src="{{url_for('static', filename='js/uikit-icons.min.js')}}"></script>
+
+	<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+	
+	<script>
+		const socket = io('http://127.0.0.1:5000/sala-espera')
+		const ROOM = document.querySelector("#sala_espera").dataset.room
+
+
+		socket.on('connect', () => {
+			socket.emit('join', {room: ROOM})
+		})
+
+		socket.on('disconnect', () => {
+			UIkit.notification(
+				'Ha ocurrio un error, por favor recarga la página', 
+				{
+					status: 'danger',
+					timeout: 4500,
+					pos: 'bottom-right'
+				}
+
+			);
+		})
+
+		socket.on("sala_espera", ({rooms, redirect}) => {
+			const all_rooms = document.querySelector('#all_rooms')
+			let data = undefined
+			
+			
+			if(rooms.length){
+				lista_rooms = rooms.map((chat) => {
+					let elemento = document.createElement('div')
+					elemento.className = 'uk-margin-small-bottom'
+					elemento.innerHTML = `
+						<dt>Chat: ${chat.room}</dt>
+						<dd>usuarios en el chat: ${chat.total_usuarios}</dd>
+					`
+					return elemento
+				})
+
+				data = document.createElement('dl')
+				data.className = "uk-description-list uk-description-list-divider"
+				data.append(...lista_rooms)
+				
+			}
+			else{
+				data = document.createElement('span')
+				data.className = "uk-label uk-label-danger"
+				data.textContent = `No hay Rooms creados`
+			}
+
+			all_rooms.replaceChildren()
+			all_rooms.appendChild(data) 
+		})
+
+
+	</script>
+{% endblock script %}
