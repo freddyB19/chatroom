@@ -7,7 +7,11 @@ class BaseConfig:
 class DevConfig(BaseConfig):
 	DEBUG = True
 
+class DeploymentConfig(BaseConfig):
+	DEBUG = False
+
 
 configs = {
-	'dev': DevConfig
+	'dev': DevConfig,
+	'deploy': DeploymentConfig
 }
