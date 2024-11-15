@@ -18,7 +18,7 @@ def create_app(config_object):
 
 
 	#
-	cors = CORS(app, resource=['http:localhost:5000/'])
+	cors = CORS(app, origins=['http:localhost:5000/'])
 
 	#
 	cache.init_app(app)
