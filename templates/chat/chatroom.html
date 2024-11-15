@@ -115,7 +115,7 @@
 
 	<script>
 
-		const socket = io('http://127.0.0.1:5000/chat')
+		const socket = io('ws://localhost:5000/chat')
 		const room = document.querySelector("#chatroom").dataset.room
 		const consola = document.querySelector("#allMessages")
 		const input_mensaje = document.querySelector("#input-message")
