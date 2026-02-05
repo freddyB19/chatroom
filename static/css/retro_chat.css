@@ -1,0 +1,306 @@
+:root {
+     --bg-purple-texture: #e0b0ff; /* Color base del fondo externo */
+     --bg-paper: #fdfaf3;          /* Color crema del papel */
+     --sketch-color: #2b2b2b;      /* Color oscuro para bordes y texto, como lápiz */
+     --sketch-border: 2px solid var(--sketch-color);
+     --sketch-shadow: 3px 3px 0px var(--sketch-color); /* Sombra sólida para efecto 3D */
+     --font-mono: 'Courier New', Courier, monospace; /* Tipografía estilo máquina de escribir */
+     --icon-color-red: #d9534f;
+     --icon-color-blue: #5bc0de;
+
+     --shadow-color: #333;
+    --border-color: #2b2b2b;
+    --border-width: 3px;
+
+
+     --color-text: #2e2e2e;
+      --color-primary-bg: #f3f0e6; /* Color crema del fondo principal */
+     --color-header-bg: #ff8181; /* Color salmón del header */
+     --color-border: #2e2e2e;    /* Color oscuro de los bordes (casi negro) */
+     --color-text: #2e2e2e;
+     --border-thickness: 2px;    /* Grosor del borde para el efecto dibujo */
+}
+
+
+body {
+    background-color: #55a655;
+    background-image: 
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 20px 20px, 20px 20px;
+  height: 100vh;
+  padding: 3px 20px;
+
+}
+
+
+/* --- Contenedor Principal del Teléfono --- */
+.phone-container {
+  width: 100%;
+  max-width: 750px;
+  margin: auto;
+  height: 80vh;
+  max-height: 700px;
+  background-color: var(--bg-paper);
+  border: var(--border-width) solid var(--border-color); /* Borde más grueso para el teléfono */
+  border-radius: 20px;
+  /* La sombra externa grande */
+  box-shadow: 8px 8px 0 var(--shadow-color); 
+  overflow: hidden; /* Para que las esquinas redondeadas corten el contenido */
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Cabecera (Header) --- */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: var(--sketch-border);
+  background-color: var(--bg-paper);
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Estilos para los iconos SVG inline */
+.icon {
+  width: 24px;
+  height: 24px;
+  stroke: var(--sketch-color);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon-flag { stroke: var(--icon-color-red); fill: var(--icon-color-red); }
+.icon-info { stroke: var(--icon-color-blue); }
+
+
+/* --- Área de Mensajes (Cuerpo) --- */
+.chat-body {
+  flex: 1; /* Ocupa el espacio restante */
+  overflow-y: auto; /* Permite scroll */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Estilos generales de mensajes */
+.message-group {
+    display: flex;
+    align-items: flex-end; /* Alinea avatar y burbuja abajo */
+    gap: 10px;
+    width: 65%;
+    max-width: 85%;
+}
+
+/* Estilos Generales de Burbuja */
+.message-bubble {
+    width: 55%;
+    max-width: 85%;
+    padding: 12px 15px;
+    background-color: var(--bg-paper);
+    border: var(--sketch-border);
+    /* La clave del estilo: sombra sólida desplazada */
+    box-shadow: var(--sketch-shadow);
+    word-wrap: break-word;
+    position: relative;
+}
+
+.message-long {
+    width: 90%;
+}
+
+/* Burbuja Izquierda (Recibido) */
+.message-left {
+  align-self: flex-start;
+  /* Esquinas redondeadas excepto la inferior izquierda */
+  border-radius: 15px 15px 15px 0px;
+}
+
+/* Burbuja Derecha (Enviado) */
+.message-right {
+  align-self: flex-end;
+   /* Esquinas redondeadas excepto la inferior derecha */
+  border-radius: 15px 15px 0px 15px;
+}
+
+/* Separador de fecha/texto central */
+.chat-divider {
+  align-self: center;
+  font-size: 0.9rem;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+/* Avatar y espaciador */
+.avatar-container, .avatar-spacer {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0; /* Evita que el avatar se aplaste */
+}
+
+.avatar-container {
+    border: var(--border-thickness) solid var(--color-border);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-primary-bg);
+}
+
+.user-icon {
+    width: 20px;
+    height: 20px;
+    stroke: var(--color-text);
+}
+
+/* Recibido (Alineado a la izquierda) */
+.message-group.received {
+    align-self: flex-start;
+}
+/* Pequeño ajuste para que las burbujas seguidas sin avatar se alineen bien */
+.message-group.received .avatar-spacer {
+    display: block;
+}
+
+/* Enviado (Alineado a la derecha) */
+.message-group.sent {
+    align-self: flex-end;
+    flex-direction: row-reverse; /* Invierte el orden: burbuja primero, luego avatar */
+}
+
+
+/* --- Pie de página (Input) --- */
+.chat-footer {
+    background-color: var(--color-primary-bg);
+    border-top: var(--border-thickness) solid var(--color-border);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.chat-input {
+    flex: 1; /* Ocupa el espacio central */
+    border: none;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--sketch-color);
+    outline: none; /* Quitar el borde azul al seleccionar */
+}
+
+.chat-input::placeholder {
+    color: var(--color-text);
+    opacity: 0.7;
+}
+
+.retro-btn {
+    background: white;
+    border: var(--border-width) solid var(--border-color);
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 var(--border-color);
+    text-transform: uppercase;
+    border-radius: 10px;
+}
+
+.retro-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0 var(--border-color);
+}
+
+/* Estado desactivado del botón retro */
+.retro-btn:disabled {
+    background-color: #e0e0e0; /* Gris claro */
+    color: #888888;            /* Texto gris */
+    border-color: #888888;     /* Borde gris */
+    box-shadow: none;          /* Eliminamos la sombra sólida */
+    cursor: not-allowed;       /* Cursor de bloqueo */
+    transform: none;           /* Evitamos que se mueva si intentan clickear */
+}
+
+.retro-btn:disabled:hover {
+    background-color: #e0e0e0;
+}
+
+
+/* --- Estilos del Indicador de Escribiendo --- */
+
+/* El contenedor hereda el estilo de message-bubble y message-left, 
+   pero le damos dimensiones fijas para los puntos */
+.typing-indicator {
+    display: none; /* Oculto por defecto */
+    width: 80px;   /* Ancho fijo para los puntos */
+    height: 15px;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;      /* Espacio entre puntos */
+}
+
+/* Cuando está activo, usamos flex para alinear los puntos */
+.typing-indicator.is-active {
+    display: flex;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto de aparición */
+}
+
+/* Los puntos que saltan */
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--sketch-color); /* Color grafito */
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+/* Retraso en la animación para crear la "ola" */
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+.dot:nth-child(3) { animation-delay: 0s; }
+
+/* Animación del salto */
+@keyframes bounce {
+    0%, 80%, 100% { 
+        transform: scale(0); 
+    }
+    40% { 
+        transform: scale(1); 
+    }
+}
+
+/* Animación de entrada de la burbuja (pop) */
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Ajustes para móviles muy pequeños */
+@media (max-width: 650px){
+    .phone-container {
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 350px) {
+  .phone-container {
+    height: 90vh;
+    border-radius: 10px;
+    max-width: 600px;
+  }
+  .chat-header, .chat-footer {
+      padding: 10px;
+  }
+}

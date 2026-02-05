@@ -1,0 +1,500 @@
+/* --- Variables y Reset --- */
+:root {
+    --bg-color: #fdfaf3; /* Crema de la imagen */
+    --border-color: #2b2b2b;
+    --accent-bg: #fff;
+    --shadow-color: #333;
+    --text-color: #2b2b2b;
+    --border-width: 3px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #55a655; /* Fondo verde del escritorio */
+    font-family: 'Courier New', Courier, monospace; /* Fuente más retro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background-image: 
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 20px 20px, 20px 20px;
+}
+
+/* --- Estructura de Ventana --- */
+.window-container {
+    background-color: var(--bg-color);
+    border: var(--border-width) solid var(--border-color);
+    width: 100%;
+    max-width: 900px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 12px 12px 0 var(--shadow-color);
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+/* --- Header --- */
+.window-header {
+    background: white;
+    border-bottom: var(--border-width) solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+
+.dot {
+    width: 15px;
+    height: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+}
+
+.window-title {
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- Toolbar --- */
+.toolbar {
+    border-bottom: var(--border-width) solid var(--border-color);
+    padding: 8px 15px;
+}
+
+.t-icon {
+    font-size: 1.2rem;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+/* --- Layout Principal --- */
+.main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* --- Sidebar (Menú Izquierdo) --- */
+.sidebar {
+    width: 260px;
+    border-right: var(--border-width) solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.team-selector {
+    border: var(--border-width) solid var(--border-color);
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    background: white;
+    font-weight: bold;
+}
+
+.nav-item {
+    margin-bottom: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.channel-list {
+    list-style: none;
+    margin-left: 20px;
+    border-left: 2px solid var(--border-color);
+}
+
+.channel-list li {
+    padding: 4px 10px;
+    color: #666;
+    position: relative;
+}
+
+/* El estilo de las líneas de árbol */
+.channel-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 15px;
+    width: 10px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.active-channel {
+    color: var(--text-color) !important;
+    font-weight: bold;
+}
+
+.badge {
+    background: #333;
+    color: white;
+    border-radius: 12px;
+    padding: 1px 8px;
+    font-size: 0.75rem;
+    float: right;
+}
+
+/* --- Área de Formulario --- */
+.content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+.content-header {
+    padding: 10px 15px;
+    border-bottom: 2px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-container {
+    padding: 30px;
+    flex: 1;
+    background-color: var(--bg-color);
+}
+
+.form-container h2 {
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    padding: 10px;
+    border: var(--border-width) solid var(--border-color);
+    background: white;
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+}
+
+
+.retro-btn {
+    background: white;
+    border: var(--border-width) solid var(--border-color);
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 var(--border-color);
+    text-transform: uppercase;
+    /*border-radius: 8px;*/
+}
+
+.retro-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0 var(--border-color);
+}
+
+/* Estado desactivado del botón retro */
+.retro-btn:disabled {
+    background-color: #e0e0e0; /* Gris claro */
+    color: #888888;            /* Texto gris */
+    border-color: #888888;     /* Borde gris */
+    box-shadow: none;          /* Eliminamos la sombra sólida */
+    cursor: not-allowed;       /* Cursor de bloqueo */
+    transform: none;           /* Evitamos que se mueva si intentan clickear */
+}
+
+/* Opcional: Para que no cambie al pasar el mouse si está desactivado */
+.retro-btn:disabled:hover {
+    background-color: #e0e0e0;
+}
+
+/* --- Footer / Message bar --- */
+.message-footer {
+    padding: 15px;
+    border-top: var(--border-width) solid var(--border-color);
+}
+
+.input-wrapper {
+    display: flex;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 12px;
+    background: white;
+    overflow: hidden;
+}
+
+.main-input {
+    flex: 1;
+    border: none;
+    padding: 12px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.send-btn {
+    border-left: var(--border-width) solid var(--border-color);
+    background: white;
+    padding: 0 20px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.send-btn:hover {
+    background: #eee;
+}
+
+
+/* --- Ventana --- */
+.window-container {
+    background-color: var(--bg-color);
+    border: var(--border-width) solid var(--border-color);
+    width: 100%;
+    max-width: 900px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 10px 10px 0 var(--shadow-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.window-header {
+    background: white;
+    border-bottom: var(--border-width) solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+}
+
+.window-controls { display: flex; gap: 6px; margin-right: 20px; }
+.dot { width: 12px; height: 12px; border: 2px solid var(--border-color); border-radius: 50%; }
+
+/* --- Botón de Menú Retro --- */
+.menu-toggle {
+    display: none; /* Oculto en PC */
+    background: white;
+    border: var(--border-width) solid var(--border-color);
+    padding: 4px 10px;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--border-color);
+    margin-right: 10px;
+    /*border-radius: 8px;*/
+}
+
+.menu-toggle:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--border-color);
+}
+
+.toolbar {
+    border-bottom: var(--border-width) solid var(--border-color);
+    padding: 8px 15px;
+    background-image: radial-gradient(#444 25%, transparent 25%), 
+                      radial-gradient(#444 25%, transparent 25%);
+    background-size: 4px 4px;
+    background-position: 0 0, 2px 2px;
+}
+
+/* --- Layout --- */
+.main-layout { display: flex; flex: 1; position: relative; overflow: hidden; }
+
+/* Sidebar Estilo Retro */
+.sidebar {
+    width: 250px;
+    background: var(--bg-color);
+    border-right: var(--border-width) solid var(--border-color);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+}
+
+/* --- Elementos del Menú --- */
+.sidebar-header {
+    display: none;
+}
+
+.close-btn {
+    background: none;
+    border: 2px solid var(--border-color);
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.team-selector {
+    border: var(--border-width) solid var(--border-color);
+    padding: 8px;
+    margin-bottom: 20px;
+    background: white;
+    font-weight: bold;
+}
+
+.channel-list { list-style: none; margin-left: 15px; border-left: 2px solid var(--border-color); }
+.channel-list li { padding: 5px 10px; position: relative; }
+.active-channel { font-weight: bold; text-decoration: underline; }
+
+/* --- Formulario --- */
+.content-area { flex: 1; background: white; overflow-y: auto; }
+.form-container { padding: 25px; background: var(--bg-color); height: 100%; }
+.input-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+.input-group input {
+    padding: 10px;
+    border: var(--border-width) solid var(--border-color);
+    font-family: inherit;
+}
+
+
+/* -- Mensaje de error */
+
+/* Overlay para oscurecer el fondo */
+.alert-overlay {
+    /*display: none;*/ /* Se activa con JS */
+    display: flex;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Ventana de Alerta */
+.retro-alert {
+    background-color: #fdfaf3;
+    border: 3px solid #2b2b2b;
+    width: 100%;
+    max-width: 320px;
+    box-shadow: 8px 8px 0 #333; /* Sombra sólida retro */
+    display: flex;
+    flex-direction: column;
+    animation: alertPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Cabecera Roja Coral */
+.alert-header {
+    background-color: #ff8181; /* Tono rojo de la referencia */
+    border-bottom: 3px solid #2b2b2b;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.alert-close {
+    background: none;
+    border: 2px solid #2b2b2b;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 5px;
+}
+
+/* Cuerpo del Mensaje */
+.alert-body {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.alert-icon {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #2b2b2b;
+    background-color: #ff8181;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 900;
+    flex-shrink: 0;
+}
+
+.alert-footer {
+    padding: 15px;
+    text-align: center;
+    border-top: 2px solid #2b2b2b;
+}
+
+/* Botón específico de la alerta */
+.alert-btn {
+    width: 100px;
+    background-color: #fff !important;
+}
+
+/* Animación de aparición */
+@keyframes alertPop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+
+
+
+/* Asegúrate de que el sidebar tenga un z-index alto en móvil */
+@media (max-width: 768px) {
+    .menu-toggle { display: inline-block; }
+    .desktop-only { display: none; }
+
+    .sidebar {
+        position: absolute;
+        left: -280px; /* Un poco más afuera por seguridad */
+        top: 0;
+        bottom: 0;
+        width: 250px;
+        z-index: 1000; /* Prioridad máxima */
+        transition: left 0.3s ease-in-out;
+        background-color: var(--bg-color);
+        box-shadow: 5px 0 0 var(--border-color);
+    }
+
+    .sidebar.active {
+        left: 0 !important; /* El !important asegura que sobreescriba cualquier otro estilo */
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed; /* Cambiado a fixed para cubrir toda la pantalla */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 999; /* Justo debajo del sidebar */
+    }
+
+    .sidebar-overlay.active {display: block;}
+
+    .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .window-controls { display: none; }
+}

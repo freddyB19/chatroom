@@ -1,0 +1,34 @@
+ <div class="phone-container">
+    <header class="chat-header">
+        <div class="header-left">
+            <button uk-icon="icon: sign-out" class="uk-button uk-button-text salir">
+            </button>
+            <span class="chat-title">
+                <span class="uk-text-capitalize">{{name_room}}</span>
+            </span>
+        </div>
+        <div class="header-right">
+            <span uk-icon="users" id="id-users"></span>
+             <div id="notification-users" class="uk-flex" style="gap: 0.08rem;"></div>
+
+        </div>
+    </header>
+
+    <main class="chat-body" id="allMessages">
+        <div class="message-bubble message-left typing-indicator" id="typingIndicator">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </main>
+
+     <footer >
+        <form id="form-chat" class="chat-footer">
+            <input type="text" class="chat-input" placeholder="Type your messsage" id="input-message">
+            <button class="retro-btn" id="button-send-message" type="submit" disabled>
+                ➤
+            </button>
+        </form>
+    </footer>
+
+</div>

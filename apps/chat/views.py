@@ -6,9 +6,7 @@ from flask import url_for
 from flask import redirect
 from flask import render_template
 
-from . import cache
-from . import Cache_UsersInRoom
-
+from . import cache, Cache_UsersInRoom, NAME_LIVINGROOM
 
 
 view = Blueprint('chat', __name__, template_folder = 'templates')
@@ -16,18 +14,18 @@ view = Blueprint('chat', __name__, template_folder = 'templates')
 @view.before_request
 def before():
 	if request.endpoint == 'chat.index' and request.method == 'POST':
-		session['request_username'] = request.form['username']
-		session['request_room'] = request.form['nameChatroom']
+		session['request_username'] = request.form['username'].strip().lower()
+		session['request_room'] = request.form['nameChatroom'].strip()
 
 	
 @view.route("/", methods= ['GET', 'POST'])
 def index():
-	context = {}
+	context = {"room": NAME_LIVINGROOM}
 	cache_rooms = Cache_UsersInRoom(cache = cache)
 
 	if request.method == 'POST':
-		room = request.form['nameChatroom']
-		username = request.form['username']
+		room = session.get("request_room")
+		username =  session.get('request_username')
 		lista_usuarios = cache_rooms.get_users_of_room(room = room)
 
 		if username not in lista_usuarios:

@@ -1,3 +1,5 @@
+from typing import TypeVar
+
 from flask_caching import Cache
 from collections import defaultdict
 
@@ -13,6 +15,29 @@ config_cache = {
 
 cache = Cache(config = config_cache['simple'])
 
+NAME_LIVINGROOM = "living-room"
+
+Caching = TypeVar("Caching", bound=Cache)
+
+def connect_to_livingroom(cache: Caching) -> None:
+	TOTAL_ADD = 1
+	
+	if not cache.has('livingroom'):
+		cache.set("livingroom", TOTAL_ADD)
+	else:
+		members = cache.get("livingroom")
+		cache.set("livingroom", members + TOTAL_ADD)
+
+def disconnect_to_livingroom(cache: Caching) -> None:
+	if not cache.has('livingroom'):
+		return None
+
+	members = cache.get("livingroom")
+	refresh_total_members = members - 1 if members > 0 else 1
+	cache.set("livingroom", refresh_total_members)
+
+def get_total_members_livingroom(cache: Caching) -> int:
+	return cache.get("livingroom") if cache.has("livingroom") else 0
 
 class Cache_UsersInRoom:
 	def __init__(self, cache):

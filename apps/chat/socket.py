@@ -12,30 +12,34 @@ from flask_socketio import leave_room
 from flask_socketio import disconnect
 from flask_socketio import close_room
 
-
-from . import cache
-from . import Cache_UsersInRoom
-
+from . import (
+	cache,
+	NAME_LIVINGROOM,
+	Cache_UsersInRoom,
+	connect_to_livingroom,
+	disconnect_to_livingroom,
+	get_total_members_livingroom,
+)
 
 
 class ConfigSalaEspera:
-	NOMBRE_SALA_ESPERA = ('esRoom', )
-	NAMESPACE_ROOM = ('/sala-espera', )
+	NOMBRE_SALA_ESPERA = NAME_LIVINGROOM
+	NAMESPACE_ROOM = '/sala-espera'
 
 class CofigChatRoom:
 	NAMESPACE_ROOM = ('/chat', )
 
 
-class SalaDeEspera(Namespace, ConfigSalaEspera):
-
+class SalaDeEspera(Namespace):
+	
 	def on_connect(self):
-		print("Conectado al livingroom")
+		connect_to_livingroom(cache)
 	
 	def on_disconnect(self):
-		print("Desconectado del livingroom")
+		disconnect_to_livingroom(cache)
 
 		self.on_leave(data = {
-			'room': ConfigSalaEspera.NOMBRE_SALA_ESPERA[0]
+			'room': ConfigSalaEspera.NOMBRE_SALA_ESPERA
 		})
 
 
@@ -45,16 +49,20 @@ class SalaDeEspera(Namespace, ConfigSalaEspera):
 
 		join_room(room)
 
-		if room == self.NOMBRE_SALA_ESPERA[0]:
+		if room == ConfigSalaEspera.NOMBRE_SALA_ESPERA:
 			rooms = cache_rooms.get_users_in_room()
 			if rooms is not None:
-				emit('sala_espera', {'rooms': rooms}, to=self.NOMBRE_SALA_ESPERA[0])
+				emit(
+					'sala_espera', 
+					{'rooms': rooms, 'total': get_total_members_livingroom(cache)}, 
+					to=ConfigSalaEspera.NOMBRE_SALA_ESPERA
+				)
 
 	def on_leave(self, data):
 		room:str = data['room']
 
-		if room == self.NOMBRE_SALA_ESPERA[0]:
-			leave_room(room, namespace = ConfigSalaEspera.NAMESPACE_ROOM[0])
+		if room == ConfigSalaEspera.NOMBRE_SALA_ESPERA:
+			leave_room(room, namespace = ConfigSalaEspera.NAMESPACE_ROOM)
 
 
 
@@ -92,7 +100,8 @@ class ChatRoom(Namespace):
 			context:dict = {
 				'pin': {
 					'mensaje': f'Se ha unido el usuario {username}', 
-					'usuarios': len(lista_usuarios)
+					'total_usuarios': len(lista_usuarios),
+					'usuarios': lista_usuarios
 				}
 			}
 
@@ -101,7 +110,12 @@ class ChatRoom(Namespace):
 			rooms = cache_rooms.get_users_in_room()
 
 			if rooms:
-				emit('sala_espera', {'rooms': rooms}, namespace = ConfigSalaEspera.NAMESPACE_ROOM[0], broadcast = True)
+				emit(
+					'sala_espera', 
+					{'rooms': rooms, 'total': get_total_members_livingroom(cache)}, 
+					namespace = ConfigSalaEspera.NAMESPACE_ROOM, 
+					broadcast = True
+				)
 
 
 	def on_leave(self, data):
@@ -121,8 +135,9 @@ class ChatRoom(Namespace):
 			emit(
 				'notificacion', {
 					'pin': {
-						'mensaje': f'El usuario {username} ha salido del chat', 
-						'usuarios': len(lista_usuarios)
+						'mensaje': f'El usuario {username} ha salido del chat',
+						'total_usuarios': len(lista_usuarios), 
+						'usuarios': lista_usuarios
 					}},
 				to=room
 			)
@@ -131,8 +146,8 @@ class ChatRoom(Namespace):
 			if rooms:
 				emit(
 					'sala_espera', 
-					{'rooms': rooms},
-					namespace = ConfigSalaEspera.NAMESPACE_ROOM[0],
+					{'rooms': rooms, 'total': get_total_members_livingroom(cache)},
+					namespace = ConfigSalaEspera.NAMESPACE_ROOM,
 					broadcast = True
 				)
 
