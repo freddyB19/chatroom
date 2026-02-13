@@ -68,10 +68,9 @@ class SalaDeEspera(Namespace):
 
 class ChatRoom(Namespace):
 	def on_connect(self, data):
-		print("Conectado al chat")
+		pass
 
 	def on_disconnect(self):
-		print("Saliendo del chat")
 
 		self.on_leave(data = {
 			'username': session.get('request_username'), 

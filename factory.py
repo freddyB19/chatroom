@@ -5,27 +5,17 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 
 from apps.chat import cache
-
 from apps.chat.views import view as view_chat
+from apps.chat.socket import ChatRoom, SalaDeEspera
 
-from apps.chat.socket import ChatRoom
-from apps.chat.socket import SalaDeEspera
 
 def create_app(config_object):
 	app = Flask(__name__)
 	app.config.from_object(config_object)
 	app.register_blueprint(view_chat)
 
-
 	#
-	cors = CORS(app, origins=[
-		'http://localhost:5000', 
-		'http://localhost:5000/socket.io',
-		'http://127.0.0.1:5000/',
-		'http://127.0.0.1:5000/socket.io'
-		]
-	)
-
+	cors = CORS(app)
 	#
 	cache.init_app(app)
 
@@ -33,7 +23,7 @@ def create_app(config_object):
 
 
 def create_app_socket(app):
-	socket = SocketIO(app)
+	socket = SocketIO(app, async_mode='gevent')
 
 	socket.on_namespace(ChatRoom('/chat'))
 	socket.on_namespace(SalaDeEspera('/sala-espera'))
