@@ -3,3 +3,4 @@ test_index.html
 
 venv*
 .env
+.venv
