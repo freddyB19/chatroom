@@ -3,7 +3,7 @@ name = "chat"
 version = "0.1.0"
 description = "Aplicación de salas de chat"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "bidict==0.23.1",
     "blinker==1.8.2",
@@ -33,6 +33,3 @@ dependencies = [
     "zope-event==5.0",
     "zope-interface==7.1.1",
 ]
-
-[project.scripts]
-app = "app:app"
